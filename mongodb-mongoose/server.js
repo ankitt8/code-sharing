@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS middleware (for frontend integration)
 app.use((req, res, next) => {
+  console.log('CORS middleware', req.method, req.url);
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
