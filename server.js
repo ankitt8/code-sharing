@@ -93,7 +93,7 @@ app.get('/', (req, res) => {
 app.get('/transactions', async (req, res) => {
   try {
     console.log('📥 GET /transactions - Fetching transactions...');
-    
+
     const transactions = await Transaction.find().sort({ date: -1 });
 
     console.log(`✅ Found ${transactions.length} transactions`);
@@ -116,9 +116,9 @@ app.get('/transactions', async (req, res) => {
 app.get('/transactions/:id', async (req, res) => {
   try {
     console.log(`🔍 GET /transactions/${req.params.id} - Fetching transaction...`);
-    
+
     const transaction = await Transaction.findById(req.params.id);
-    
+
     if (!transaction) {
       console.log('❌ Transaction not found');
       return res.status(404).json({
@@ -152,7 +152,7 @@ app.post('/transactions', async (req, res) => {
     const savedTransaction = await transaction.save();
 
     console.log('✅ Transaction created successfully:', savedTransaction._id);
-    
+
     res.status(201).json({
       success: true,
       message: 'Transaction created successfully',
@@ -160,7 +160,7 @@ app.post('/transactions', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error creating transaction:', error.message);
-    
+
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => err.message);
       return res.status(400).json({
@@ -199,7 +199,7 @@ app.put('/transactions/:id', async (req, res) => {
     }
 
     console.log('✅ Transaction updated successfully');
-    
+
     res.json({
       success: true,
       message: 'Transaction updated successfully',
@@ -207,7 +207,7 @@ app.put('/transactions/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error updating transaction:', error.message);
-    
+
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => err.message);
       return res.status(400).json({
@@ -241,7 +241,7 @@ app.delete('/transactions/:id', async (req, res) => {
     }
 
     console.log('✅ Transaction deleted successfully');
-    
+
     res.json({
       success: true,
       message: 'Transaction deleted successfully',
@@ -275,9 +275,10 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0'; // Required for Cloud Run
 
-app.listen(PORT, () => {
-  console.log(`🚀 Simple Money Tracker Server is running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Simple Money Tracker Server is running on http://${HOST}:${PORT}`);
   console.log('📋 Available endpoints:');
   console.log('  GET    /                     - API information');
   console.log('  GET    /transactions         - Get all transactions');
