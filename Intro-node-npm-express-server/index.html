@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Intro to Node.js & Express.js</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #1e1e1e;
+        color: #f1f1f1;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .slide {
+        display: none;
+        padding: 50px;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+
+      .active {
+        display: block;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #4cafef;
+      }
+
+      .nav {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        background: #4cafef;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      pre {
+        background: #2d2d2d;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+
+      .notes {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #bbb;
+        border-top: 1px dashed #555;
+        padding-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Slides -->
+    <div class="slide active">
+      <h1>Intro to Node.js & Express.js</h1>
+      <h3>1.5 hrs Session</h3>
+      <p>
+        Agenda:<br />• What is Node.js?<br />• npm Basics<br />• Express.js
+        Introduction<br />• Hands-on Server Setup
+      </p>
+    </div>
+
+    <div class="slide">
+      <h2>What is Node.js?</h2>
+      <ul>
+        <li>Open-source, cross-platform runtime environment</li>
+        <li>Built on Chrome’s V8 JavaScript engine</li>
+        <li>Used for server-side applications</li>
+        <li>Single-threaded, event-driven architecture</li>
+      </ul>
+      <div class="notes">
+        Node.js is free, works on all OS, and uses Chrome’s V8 engine. It allows
+        JavaScript outside the browser, mainly for backend apps. Its
+        single-threaded, event-driven design makes it lightweight but scalable.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Why Node.js?</h2>
+      <ul>
+        <li>Fast and scalable</li>
+        <li>JavaScript everywhere (frontend + backend)</li>
+        <li>Rich ecosystem of npm packages</li>
+        <li>Non-blocking I/O model</li>
+      </ul>
+      <div class="notes">
+        Node.js is fast because of V8 + async I/O. Developers use one language
+        across frontend & backend. npm offers millions of packages. Its
+        non-blocking model means tasks don’t block each other.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Node.js Installation</h2>
+      <pre>
+# Check Node.js version
+node -v
+
+# Check npm version
+npm -v
+    </pre
+      >
+      <div class="notes">
+        Make sure Node is installed from nodejs.org. Use these commands to
+        confirm installation.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>npm (Node Package Manager)</h2>
+      <ul>
+        <li>Default package manager for Node.js</li>
+        <li>Over 2M+ packages available</li>
+        <li>Helps manage dependencies</li>
+      </ul>
+      <pre>
+# Initialize project
+npm init -y
+
+# Install a package
+npm install express
+    </pre
+      >
+      <div class="notes">
+        npm helps install and manage libraries. `init` creates package.json,
+        `install` downloads modules.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>package.json</h2>
+      <pre>
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+    </pre
+      >
+      <div class="notes">
+        package.json stores metadata, scripts, and dependencies. Think of it as
+        a project manifest.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>What is Express.js?</h2>
+      <ul>
+        <li>Fast, minimal web framework for Node.js</li>
+        <li>Simplifies server creation</li>
+        <li>Middleware support</li>
+        <li>Routing made easy</li>
+      </ul>
+      <div class="notes">
+        Express is lightweight, easy to use, and adds routing + middleware to
+        Node.js.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Create Express.js Server</h2>
+      <pre>
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+    </pre
+      >
+      <div class="notes">
+        `require` imports Express. `app.get` defines routes. `listen` runs the
+        server.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Express.js Routing</h2>
+      <pre>
+app.get('/about', (req, res) => {
+  res.send('About Page');
+});
+
+app.post('/login', (req, res) => {
+  res.send('Login Success');
+});
+    </pre
+      >
+      <div class="notes">
+        Routes define how the app responds to URLs. GET is for reading, POST is
+        for sending data.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Middleware in Express</h2>
+      <pre>
+app.use((req, res, next) => {
+  console.log('Request URL:', req.url);
+  next();
+});
+    </pre
+      >
+      <p>Middleware functions can modify requests/responses.</p>
+      <div class="notes">
+        Middleware sits between request & response. Use it for logging,
+        authentication, or error handling.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Sync vs Async in Node.js</h2>
+      <h3>Synchronous Code</h3>
+      <pre>
+const fs = require("fs");
+
+console.log("Start");
+
+const data1 = fs.readFileSync("file1.txt", "utf8"); // blocking
+console.log("File1 content:", data1);
+
+const data2 = fs.readFileSync("file2.txt", "utf8"); // blocking
+console.log("File2 content:", data2);
+
+console.log("End");
+    </pre
+      >
+
+      <h3>Asynchronous Code</h3>
+      <pre>
+const fs = require("fs");
+
+console.log("Start");
+
+fs.readFile("file1.txt", "utf8", (err, data1) => {
+  if (err) throw err;
+  console.log("File1 content:", data1);
+});
+
+fs.readFile("file2.txt", "utf8", (err, data2) => {
+  if (err) throw err;
+  console.log("File2 content:", data2);
+});
+
+console.log("End");
+    </pre
+      >
+
+      <div class="notes">
+        • Sync: Execution is Start → File1 → File2 → End (blocking).<br />
+        • Async: Execution is Start → End → File1 → File2 (non-blocking).<br />
+        • This shows Node.js’s non-blocking, event-driven model.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Event Loop Analogy</h2>
+      <p>Imagine a smarter restaurant:</p>
+      <ul>
+        <li>There is one main waiter (<strong>event loop</strong>).</li>
+        <li>
+          When a customer orders food, the waiter passes the order to the
+          kitchen (<strong>OS/worker threads</strong>).
+        </li>
+        <li>The waiter immediately goes to take the next customer’s order.</li>
+        <li>
+          When the kitchen finishes cooking, they notify the waiter, who
+          delivers it to the right customer.
+        </li>
+      </ul>
+      <div class="notes">
+        This analogy shows why Node.js can handle thousands of requests with a
+        single thread. The waiter (event loop) never stands idle; the kitchen
+        (system) does the heavy work.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Hands-on Practice</h2>
+      <ol>
+        <li>Initialize Node project</li>
+        <li>Install Express.js</li>
+        <li>Create <code>index.js</code> server</li>
+        <li>Test endpoints</li>
+      </ol>
+      <div class="notes">
+        Encourage students to create their own route like `/hello`. Test using
+        browser or Postman.
+      </div>
+    </div>
+
+    <div class="slide">
+      <h2>Q&A + Wrap Up</h2>
+      <p>
+        We covered:<br />✔ Node.js basics<br />✔ npm usage<br />✔ Express.js
+        server setup
+      </p>
+      <p>
+        Next steps:<br />• Explore REST APIs<br />• Connect with databases
+        (MongoDB, MySQL)
+      </p>
+      <div class="notes">
+        Summarize learnings. Suggest building REST APIs and integrating
+        databases as the next step.
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+      <button onclick="prevSlide()">Previous</button>
+      <button onclick="nextSlide()">Next</button>
+    </div>
+
+    <script>
+      let slides = document.querySelectorAll('.slide');
+      let index = 0;
+
+      function showSlide(i) {
+        slides.forEach((s) => s.classList.remove('active'));
+        slides[i].classList.add('active');
+      }
+
+      function nextSlide() {
+        index = (index + 1) % slides.length;
+        showSlide(index);
+      }
+
+      function prevSlide() {
+        index = (index - 1 + slides.length) % slides.length;
+        showSlide(index);
+      }
+    </script>
+  </body>
+</html>

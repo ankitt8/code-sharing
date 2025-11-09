@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://code-sharing-342385084731.europe-west1.run.app';
 
 // DOM Elements
 const transactionForm = document.getElementById('transactionForm');
@@ -22,23 +22,23 @@ let currentEditId = null;
 let transactions = [];
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = today;
-    
+
     // Load transactions on page load
     loadTransactions();
-    
+
     // Event listeners
     transactionForm.addEventListener('submit', handleAddTransaction);
     refreshBtn.addEventListener('submit', loadTransactions);
     editForm.addEventListener('submit', handleEditTransaction);
     closeModal.addEventListener('click', closeEditModal);
     cancelEdit.addEventListener('click', closeEditModal);
-    
+
     // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', function (event) {
         if (event.target === editModal) {
             closeEditModal();
         }
@@ -50,10 +50,10 @@ async function loadTransactions() {
     try {
         showLoading(true);
         hideError();
-        
+
         const response = await fetch(`${API_BASE_URL}/transactions`);
         const data = await response.json();
-        
+
         if (data.success) {
             transactions = data.data;
             displayTransactions(transactions);
@@ -63,7 +63,7 @@ async function loadTransactions() {
         }
     } catch (error) {
         console.error('Error loading transactions:', error);
-        showError('Failed to load transactions. Make sure the server is running on port 3000.');
+        showError('Failed to load transactions. Please check your internet connection and try again.');
     } finally {
         showLoading(false);
     }
@@ -80,7 +80,7 @@ function displayTransactions(transactions) {
         `;
         return;
     }
-    
+
     transactionsList.innerHTML = transactions.map(transaction => `
         <div class="transaction-item" data-id="${transaction._id}">
             <div class="transaction-info">
@@ -103,20 +103,20 @@ function displayTransactions(transactions) {
 // Handle adding new transaction
 async function handleAddTransaction(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(transactionForm);
     const transactionData = {
         name: formData.get('name').trim(),
         amount: parseFloat(formData.get('amount')),
         date: formData.get('date')
     };
-    
+
     // Basic validation
     if (!transactionData.name || !transactionData.amount || !transactionData.date) {
         showError('Please fill in all fields');
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/transactions`, {
             method: 'POST',
@@ -125,9 +125,9 @@ async function handleAddTransaction(event) {
             },
             body: JSON.stringify(transactionData)
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showSuccess('Transaction added successfully!');
             transactionForm.reset();
@@ -147,14 +147,14 @@ async function handleAddTransaction(event) {
 function openEditModal(transactionId) {
     const transaction = transactions.find(t => t._id === transactionId);
     if (!transaction) return;
-    
+
     currentEditId = transactionId;
-    
+
     // Populate form
     document.getElementById('editName').value = transaction.name;
     document.getElementById('editAmount').value = transaction.amount;
     document.getElementById('editDate').value = transaction.date.split('T')[0];
-    
+
     // Show modal
     editModal.style.display = 'block';
 }
@@ -169,16 +169,16 @@ function closeEditModal() {
 // Handle editing transaction
 async function handleEditTransaction(event) {
     event.preventDefault();
-    
+
     if (!currentEditId) return;
-    
+
     const formData = new FormData(editForm);
     const transactionData = {
         name: formData.get('name').trim(),
         amount: parseFloat(formData.get('amount')),
         date: formData.get('date')
     };
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/transactions/${currentEditId}`, {
             method: 'PUT',
@@ -187,9 +187,9 @@ async function handleEditTransaction(event) {
             },
             body: JSON.stringify(transactionData)
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showSuccess('Transaction updated successfully!');
             closeEditModal();
@@ -208,14 +208,14 @@ async function deleteTransaction(transactionId) {
     if (!confirm('Are you sure you want to delete this transaction?')) {
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/transactions/${transactionId}`, {
             method: 'DELETE'
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showSuccess('Transaction deleted successfully!');
             loadTransactions(); // Reload transactions
@@ -233,7 +233,7 @@ function updateSummary(transactions) {
     const totalCount = transactions.length;
     const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
     const avgAmount = totalCount > 0 ? totalAmount / totalCount : 0;
-    
+
     totalCountEl.textContent = totalCount;
     totalAmountEl.textContent = `₹${formatAmount(totalAmount)}`;
     avgAmountEl.textContent = `₹${formatAmount(avgAmount)}`;
@@ -281,16 +281,16 @@ function showSuccess(message) {
     if (existingSuccess) {
         existingSuccess.remove();
     }
-    
+
     // Create and show success message
     const successDiv = document.createElement('div');
     successDiv.className = 'success';
     successDiv.textContent = message;
-    
+
     // Insert after the form
     const addTransactionSection = document.querySelector('.add-transaction');
     addTransactionSection.appendChild(successDiv);
-    
+
     // Auto-hide after 3 seconds
     setTimeout(() => {
         successDiv.remove();
@@ -298,18 +298,18 @@ function showSuccess(message) {
 }
 
 // Refresh button click handler
-refreshBtn.addEventListener('click', function(e) {
+refreshBtn.addEventListener('click', function (e) {
     e.preventDefault();
     loadTransactions();
 });
 
 // Add some keyboard shortcuts
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     // Escape key closes modal
     if (event.key === 'Escape' && editModal.style.display === 'block') {
         closeEditModal();
     }
-    
+
     // Ctrl/Cmd + R refreshes transactions
     if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
         event.preventDefault();
