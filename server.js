@@ -1,6 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+
+// Only load dotenv in development (not in production/Cloud Run)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const app = express();
 
 // Middleware
@@ -20,18 +25,13 @@ app.use((req, res, next) => {
   }
 });
 
-// Check if MONGODB_URI is loaded
-if (!process.env.MONGODB_URI) {
-  console.error('❌ ERROR: MONGODB_URI is not defined in .env file');
-  console.log('\n📝 Please create a .env file in the mongodb-mongoose folder with:');
-  console.log('MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/myDatabase');
-  process.exit(1);
-}
+// MongoDB URI - use environment variable if set, otherwise use hardcoded value
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ankit90499_db_user:LErzjAJbHXi0WdLy@cluster0.lsw0mgo.mongodb.net/?appName=Cluster0';
 
 console.log('✅ Environment variables loaded');
 console.log('🔗 Connecting to MongoDB...');
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
   socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
 })
