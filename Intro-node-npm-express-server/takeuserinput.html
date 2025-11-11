@@ -14,12 +14,24 @@
 
     <button id="submitBtn">Submit</button>
 
+    <section>
+        <button id="loadUsersBtn">Load Users</button>
+        <div id="usersContainer" style="margin-top: 1rem;">
+            <h2>Registered Users</h2>
+            <p id="usersStatus">Click "Load Users" to fetch the latest users.</p>
+            <ul id="usersList"></ul>
+        </div>
+    </section>
+
     <div id="result"></div>
 
     <script>
         const submitBtn = document.getElementById('submitBtn');
         const nameInput = document.getElementById('nameInput');
         const resultDiv = document.getElementById('result');
+        const loadUsersBtn = document.getElementById('loadUsersBtn');
+        const usersList = document.getElementById('usersList');
+        const usersStatus = document.getElementById('usersStatus');
 
         submitBtn.addEventListener('click', async () => {
             const name = nameInput.value;
@@ -30,7 +42,7 @@
             }
 
             try {
-                const response = await fetch('/api/greet', {
+                const response = await fetch('http://localhost:3000/api/greet', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -43,6 +55,46 @@
             } catch (error) {
                 console.error('Error:', error);
                 resultDiv.textContent = 'Error sending request';
+            }
+        });
+
+        loadUsersBtn.addEventListener('click', async () => {
+            try {
+                usersStatus.textContent = 'Loading users...';
+                loadUsersBtn.disabled = true;
+
+                const response = await fetch('http://localhost:3000/users');
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(data);
+                const users = Array.isArray(data.data) ? data.data : [];
+
+                usersList.innerHTML = '';
+
+                if (users.length === 0) {
+                    usersStatus.textContent = 'No users found yet. Submit a name to create one.';
+                    return;
+                }
+
+                users.forEach((user) => {
+                    const li = document.createElement('li');
+                    const createdAt = user.createdAt
+                        ? new Date(user.createdAt).toLocaleString()
+                        : 'Unknown date';
+                    li.textContent = `${user.name} (${user.email}) – ${createdAt}`;
+                    usersList.appendChild(li);
+                });
+
+                usersStatus.textContent = `Showing ${users.length} user${users.length === 1 ? '' : 's'}.`;
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                usersStatus.textContent = 'Failed to load users. Please try again.';
+            } finally {
+                loadUsersBtn.disabled = false;
             }
         });
     </script>

@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // Load environment variables
 require('dotenv').config();
@@ -8,6 +9,16 @@ const app = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+// app.use(cors());
+app.use(function (req, res, next) {
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET, PUT, POST,DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+        return res.sendStatus(200);
+    }
+    next();
+})
 
 // MongoDB Atlas Connection
 const MONGODB_URI = process.env.MONGODB_URI || '';
