@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 // Load environment variables
 require('dotenv').config();
 
 const app = express();
+const DIST_PATH = path.join(__dirname, 'dist');
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -20,22 +22,31 @@ app.use(function (req, res, next) {
     next();
 })
 
+// Serve React build assets
+app.use(express.static(DIST_PATH));
+
 // MongoDB Atlas Connection
 const MONGODB_URI = process.env.MONGODB_URI || '';
 
-console.log('🔗 Connecting to MongoDB Atlas...');
-
-mongoose.connect(MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-})
-    .then(() => {
-        console.log('✅ Connected to MongoDB Atlas successfully!');
+if (!MONGODB_URI) {
+    console.warn('⚠️  No MONGODB_URI found in .env file');
+    console.warn('💡 Running without database connection - API endpoints will fail');
+    console.warn('💡 Add MONGODB_URI to your .env file to enable database features');
+} else {
+    console.log('🔗 Connecting to MongoDB Atlas...');
+    
+    mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
     })
-    .catch(err => {
-        console.error('❌ MongoDB Connection error:', err.message);
-        console.error('💡 Make sure your MongoDB Atlas connection string is correct in .env file');
-    });
+        .then(() => {
+            console.log('✅ Connected to MongoDB Atlas successfully!');
+        })
+        .catch(err => {
+            console.error('❌ MongoDB Connection error:', err.message);
+            console.error('💡 Make sure your MongoDB Atlas connection string is correct in .env file');
+        });
+}
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -61,7 +72,7 @@ const User = mongoose.model('User', userSchema);
 
 // Routes
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/takeuserinput.html');
+    res.sendFile(path.join(DIST_PATH, 'index.html'));
 });
 
 app.get('/about-us', (req, res) => {
@@ -74,6 +85,14 @@ app.get('/about-us', (req, res) => {
 // POST /submit - Save user to MongoDB
 app.post('/submit', async (req, res) => {
     try {
+        // Check if MongoDB is connected
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                error: 'Database not connected',
+                message: 'MongoDB connection is not established. Please check your .env file and ensure MONGODB_URI is set correctly.'
+            });
+        }
+
         const { name, email } = req.body;
 
         if (!name || !email) {
@@ -107,6 +126,14 @@ app.post('/submit', async (req, res) => {
 // GET /users - Get all users from MongoDB
 app.get('/users', async (req, res) => {
     try {
+        // Check if MongoDB is connected
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                error: 'Database not connected',
+                message: 'MongoDB connection is not established. Please check your .env file and ensure MONGODB_URI is set correctly.'
+            });
+        }
+        
         const users = await User.find().sort({ createdAt: -1 });
         res.json({
             success: true,
@@ -171,6 +198,16 @@ app.post('/api/greet', async (req, res) => {
             message: error.message
         });
     }
+});
+
+// React router fallback (only handle non-API GET routes)
+app.use((req, res, next) => {
+    const isApiRoute = req.path.startsWith('/api') || req.path.startsWith('/users') || req.path.startsWith('/submit');
+    if (req.method !== 'GET' || isApiRoute) {
+        return next();
+    }
+
+    res.sendFile(path.join(DIST_PATH, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
