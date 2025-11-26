@@ -14,7 +14,7 @@ function App() {
   const fetchUsers = async () => {
     try {
       setStatus({ type: 'loading', message: 'Loading users…' });
-      const res = await fetch('/users');
+      const res = await fetch('http://localhost:3000/users');
       if (!res.ok) throw new Error('Failed to fetch users');
       const data = await res.json();
       setUsers(data.data || []);
@@ -39,7 +39,7 @@ function App() {
 
     try {
       setStatus({ type: 'loading', message: 'Saving user…' });
-      const res = await fetch('/submit', {
+      const res = await fetch('http://localhost:3000/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

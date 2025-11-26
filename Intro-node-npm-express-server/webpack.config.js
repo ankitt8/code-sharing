@@ -39,12 +39,6 @@ module.exports = {
     historyApiFallback: true,
     static: {
       directory: path.resolve(__dirname, 'dist')
-    },
-    proxy: {
-      '/submit': 'http://localhost:3000',
-      '/users': 'http://localhost:3000',
-      '/users/': 'http://localhost:3000',
-      '/api': 'http://localhost:3000'
     }
   },
   devtool: isProduction ? false : 'source-map',

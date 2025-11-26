@@ -1,0 +1,52 @@
+# Node modules
+node_modules
+npm-debug.log
+.npm-cache
+
+# Development files
+.git
+.gitignore
+*.md
+README.md
+SETUP.md
+QUICKSTART.md
+START-HERE.md
+WORKING-WITHOUT-MONGODB.md
+
+# Build artifacts (will be copied from builder stage)
+dist
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.js
+*.spec.js
+__tests__
+coverage
+
+# Logs
+logs
+*.log
+
+# Environment files (will be added separately in Cloud Build)
+.env.local
+.env.development
+.env.test
+
+# Development scripts
+start-dev.sh
+
+# Temporary files
+tmp
+temp
+.cache
+

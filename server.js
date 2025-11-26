@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 // MongoDB URI - use environment variable if set, otherwise use hardcoded value
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ankit90499_db_user:LErzjAJbHXi0WdLy@cluster0.lsw0mgo.mongodb.net/?appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log('✅ Environment variables loaded');
 console.log('🔗 Connecting to MongoDB...');
