@@ -252,12 +252,18 @@ app.post('/api/greet', async (req, res) => {
 });
 
 // Serve React app for all non-API routes (for production/Docker)
-app.get('*', (req, res, next) => {
+// Using app.use() instead of app.get('/*') for Express 5 compatibility
+app.use((req, res, next) => {
     // Skip if it's an API route
     if (req.path.startsWith('/api') ||
         req.path.startsWith('/users') ||
         req.path.startsWith('/submit') ||
         req.path.startsWith('/about-us')) {
+        return next();
+    }
+
+    // Only handle GET requests for serving React app
+    if (req.method !== 'GET') {
         return next();
     }
 
